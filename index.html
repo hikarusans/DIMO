@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Morning Person</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:480px;
+}
+
+.card{
+    background:#1e293b;
+    padding:30px;
+    border-radius:25px;
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.emoji{
+    font-size:35px;
+    vertical-align:middle;
+}
+
+.subtitle{
+    text-align:center;
+    color:#94a3b8;
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:15px;
+    margin-bottom:15px;
+    background:#334155;
+    color:white;
+    font-size:16px;
+}
+
+.passwordBox{
+    position:relative;
+}
+
+.passwordBox input{
+    padding-right:50px;
+}
+
+.showBtn{
+
+    position:absolute;
+
+    right:15px;
+    top:35%;
+
+    transform:translateY(-50%);
+
+    background:none;
+    border:none;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    width:auto;
+    padding:0;
+
+}
+
+.mainBtn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(45deg,#f97316,#fb923c);
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.mainBtn:hover{
+    opacity:0.9;
+}
+
+.switch{
+    text-align:center;
+    margin-top:20px;
+    color:#cbd5e1;
+}
+
+.switch span{
+    color:#fb923c;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.hidden{
+    display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1 class="title">
+    Daily Morning Person
+    <span class="emoji">🌞</span>
+</h1>
+
+<p class="subtitle">
+Bangun dengan kegiatan positif
+<span class="emoji">🧘‍♂️</span>
+</p>
+
+<!-- LOGIN -->
+
+<div id="loginForm">
+
+<input
+type="text"
+id="loginUser"
+placeholder="Username"
+>
+
+<div class="passwordBox">
+
+<input
+type="password"
+id="loginPass"
+placeholder="Password"
+>
+
+<button
+type="button"
+onclick="toggleLoginPass()"
+class="showBtn"
+id="loginEye"
+>
+🙈
+</button>
+
+</div>
+
+<button
+class="mainBtn"
+onclick="login()"
+>
+Login
+</button>
+
+<div class="switch">
+
+Belum punya akun?
+
+<span onclick="showRegister()">
+Sign Up
+</span>
+
+</div>
+
+</div>
+
+<!-- REGISTER -->
+
+<div id="registerForm" class="hidden">
+
+<input
+type="text"
+id="registerUser"
+placeholder="Username"
+>
+
+<div class="passwordBox">
+
+<input
+type="password"
+id="registerPass"
+placeholder="Password"
+>
+
+<button
+type="button"
+onclick="toggleRegisterPass()"
+class="showBtn"
+id="registerEye"
+>
+🙈
+</button>
+
+</div>
+
+<button
+class="mainBtn"
+onclick="register()"
+>
+Sign Up
+</button>
+
+<div class="switch">
+
+Sudah punya akun?
+
+<span onclick="showLogin()">
+Login
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function showRegister(){
+
+    document.getElementById(
+        "loginForm"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "registerForm"
+    ).classList.remove("hidden");
+
+}
+
+function showLogin(){
+
+    document.getElementById(
+        "registerForm"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "loginForm"
+    ).classList.remove("hidden");
+
+}
+
+function register(){
+
+    let username =
+    document.getElementById(
+        "registerUser"
+    ).value;
+
+    let password =
+    document.getElementById(
+        "registerPass"
+    ).value;
+
+    if(username === "" || password === ""){
+
+        alert("Isi semua data!");
+
+        return;
+
+    }
+
+    let users =
+    JSON.parse(
+        localStorage.getItem("users")
+    ) || [];
+
+    let userExists = users.find(
+        user => user.username === username
+    );
+
+    if(userExists){
+
+        alert("Username sudah dipakai!");
+
+        return;
+
+    }
+
+    users.push({
+
+        username: username,
+        password: password
+
+    });
+
+    localStorage.setItem(
+        "users",
+        JSON.stringify(users)
+    );
+
+    alert("Akun berhasil dibuat!");
+
+    showLogin();
+
+}
+
+function login(){
+
+    let username =
+    document.getElementById(
+        "loginUser"
+    ).value;
+
+    let password =
+    document.getElementById(
+        "loginPass"
+    ).value;
+
+    let users =
+    JSON.parse(
+        localStorage.getItem("users")
+    ) || [];
+
+    let validUser = users.find(
+
+        user =>
+
+        user.username === username &&
+        user.password === password
+
+    );
+
+    if(validUser){
+
+        localStorage.setItem(
+            "currentUser",
+            username
+        );
+
+        window.location.href =
+        "home.html";
+
+    }else{
+
+        alert("Username atau password salah!");
+
+    }
+
+}
+
+function toggleLoginPass(){
+
+    let pass =
+    document.getElementById(
+        "loginPass"
+    );
+
+    let eye =
+    document.getElementById(
+        "loginEye"
+    );
+
+    if(pass.type === "password"){
+
+        pass.type = "text";
+
+        eye.innerHTML = "🐵";
+
+    }else{
+
+        pass.type = "password";
+
+        eye.innerHTML = "🙈";
+
+    }
+
+}
+
+function toggleRegisterPass(){
+
+    let pass =
+    document.getElementById(
+        "registerPass"
+    );
+
+    let eye =
+    document.getElementById(
+        "registerEye"
+    );
+
+    if(pass.type === "password"){
+
+        pass.type = "text";
+
+        eye.innerHTML = "🐵";
+
+    }else{
+
+        pass.type = "password";
+
+        eye.innerHTML = "🙈";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

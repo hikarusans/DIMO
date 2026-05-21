@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Morning Person</title>
+
+<style>
+
+body{
+    background:#08122e;
+    font-family:Arial;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    margin:0;
+}
+
+.box{
+    width:500px;
+    background:#1b2945;
+    padding:30px;
+    border-radius:25px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.quest{
+
+    background:#364764;
+
+    padding:20px;
+
+    border-radius:15px;
+
+    margin-bottom:15px;
+
+    font-size:20px;
+
+}
+
+.quest label{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+}
+
+.quest input{
+
+    margin-top:5px;
+
+    min-width:20px;
+
+    width:20px;
+    height:20px;
+
+}
+
+.streak{
+
+    text-align:center;
+
+    margin-top:30px;
+
+    font-size:50px;
+
+    font-weight:bold;
+
+}
+
+.streak span{
+
+    color:white;
+
+}
+
+.streak{
+
+    color:orange;
+
+}
+
+#logoutBtn{
+    position:fixed;
+    left:20px;
+    bottom:20px;
+    padding:15px 25px;
+    border:none;
+    border-radius:15px;
+    background:red;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+#aboutBtn{
+
+    position:fixed;
+
+    right:20px;
+    bottom:20px;
+
+    width:60px;
+    height:60px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#3b82f6;
+
+    color:white;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    box-shadow:0 0 15px rgba(0,0,0,0.4);
+
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="box">
+
+<h1>Daily Morning Person 🌞</h1>
+
+<div class="quest">
+<label>
+<input type="checkbox" id="q1">
+🛌 Tidur saat jam 21.00 
+</label>
+</div>
+
+<div class="quest">
+<label>
+<input type="checkbox" id="q2">
+🌅 Bangun pagi saat jam 4.30 
+</label>
+</div>
+
+<div class="quest">
+<label>
+<input type="checkbox" id="q3">
+🧹 Bersih bersih kamar dan kasur 
+</label>
+</div>
+
+<div class="quest">
+<label>
+<input type="checkbox" id="q4">
+🍽 Sarapan dengan makanan yang bergizi dan sehat
+</label>
+</div>
+
+
+<div class="streak" id="streakText">
+🔥 Streak 0 Hari
+</div>
+
+</div>
+
+<button id="logoutBtn" onclick="logout()">
+Logout
+</button>
+
+<button
+id="aboutBtn"
+onclick="window.location.href='about-you.html'"
+>
+ℹ
+</button>
+
+<script>
+
+let currentUser =
+localStorage.getItem("currentUser");
+
+if(!currentUser){
+
+    currentUser = "guest";
+
+}
+
+function getKey(key){
+
+    return currentUser + "_" + key;
+
+}
+
+function getToday(){
+
+    return new Date().toDateString();
+
+}
+
+function getYesterday(){
+
+    let d = new Date();
+
+    d.setDate(d.getDate() - 1);
+
+    return d.toDateString();
+
+}
+
+let streak = parseInt(
+
+    localStorage.getItem(
+        getKey("streak")
+    )
+
+) || 0;
+
+let lastDone =
+localStorage.getItem(
+    getKey("lastDone")
+);
+
+if(lastDone){
+
+    if(
+
+        lastDone !== getToday() &&
+        lastDone !== getYesterday()
+
+    ){
+
+        streak = 0;
+
+        localStorage.setItem(
+            getKey("streak"),
+            0
+        );
+
+    }
+
+}
+
+function updateStreak(){
+
+    let today =
+    getToday();
+
+    let lastDone =
+    localStorage.getItem(
+        getKey("lastDone")
+    );
+
+    let emoji = "❄";
+
+    if(lastDone === today){
+
+        emoji = "🔥";
+
+    }
+
+    document.getElementById(
+        "streakText"
+    ).innerHTML =
+
+    "<span>" +
+    emoji +
+    "</span> Streak " +
+    streak +
+    " Hari";
+
+}
+
+updateStreak();
+
+function saveQuest(id,value){
+
+    localStorage.setItem(
+        getKey(id),
+        value
+    );
+
+    checkQuest();
+
+}
+
+function loadQuest(id){
+
+    return localStorage.getItem(
+        getKey(id)
+    ) === "true";
+
+}
+
+let today =
+new Date().toDateString();
+
+let savedDate =
+localStorage.getItem(
+    getKey("questDate")
+);
+
+if(savedDate !== today){
+
+    localStorage.setItem(
+        getKey("q1"),
+        false
+    );
+
+    localStorage.setItem(
+        getKey("q2"),
+        false
+    );
+
+    localStorage.setItem(
+        getKey("q3"),
+        false
+    );
+
+    localStorage.setItem(
+        getKey("q4"),
+        false
+    );
+
+    localStorage.setItem(
+        getKey("questDate"),
+        today
+    );
+
+}
+
+let q1 =
+document.getElementById("q1");
+
+let q2 =
+document.getElementById("q2");
+
+let q3 =
+document.getElementById("q3");
+
+let q4 =
+document.getElementById("q4");
+
+q1.checked = loadQuest("q1");
+q2.checked = loadQuest("q2");
+q3.checked = loadQuest("q3");
+q4.checked = loadQuest("q4");
+
+q1.onchange = () => {
+
+    saveQuest("q1", q1.checked);
+
+};
+
+q2.onchange = () => {
+
+    saveQuest("q2", q2.checked);
+
+};
+
+q3.onchange = () => {
+
+    saveQuest("q3", q3.checked);
+
+};
+
+q4.onchange = () => {
+
+    saveQuest("q4", q4.checked);
+
+};
+
+
+
+function checkQuest(){
+
+    if(
+
+        q1.checked &&
+        q2.checked &&
+        q3.checked &&
+        q4.checked 
+
+    ){
+
+        let today =
+        getToday();
+
+        let lastDone =
+        localStorage.getItem(
+            getKey("lastDone")
+        );
+
+        if(lastDone !== today){
+
+            streak++;
+
+            localStorage.setItem(
+                getKey("streak"),
+                streak
+            );
+
+            localStorage.setItem(
+                getKey("lastDone"),
+                today
+            );
+
+            updateStreak();
+
+        }
+
+    }
+
+}
+
+function logout(){
+
+    let yakin = confirm(
+        "Anda yakin ingin logout?"
+    );
+
+    if(yakin){
+
+        localStorage.removeItem(
+            "currentUser"
+        );
+
+        window.location.href =
+        "index.html";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
